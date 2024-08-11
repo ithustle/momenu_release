@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Create Draft Release (CrabNebula Cloud)
-        uses: crabnebula-dev/cloud-release@dev
+        uses: crabnebula-dev/cloud-release@v0.2.0
         id: draft
         with:
           command: release draft ${{ secrets.CN_APP_ID }} --framework tauri
@@ -53,7 +53,7 @@ jobs:
         run: npm run tauri build -- -vv --target ${{ matrix.target }}
 
       - name: Upload Build Artifacts (CrabNebula Cloud)
-        uses: crabnebula-dev/cloud-release@dev
+        uses: crabnebula-dev/cloud-release@v0.2.0
         id: upload
         with:
           command: release upload ${{ secrets.CN_APP_ID }} --framework tauri
@@ -66,7 +66,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: crabnebula-dev/cloud-release@dev
+      - uses: crabnebula-dev/cloud-release@v0.2.0
         id: publish
         with:
           command: release publish ${{ secrets.CN_APP_ID }} --framework tauri
