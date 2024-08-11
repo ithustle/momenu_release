@@ -7,7 +7,7 @@
   },
   "package": {
     "productName": "tauri-app",
-    "version": "0.0.5"
+    "version": "0.0.6"
   },
   "tauri": {
     "allowlist": {
@@ -44,6 +44,9 @@
       "endpoints": [
         "https://cdn.crabnebula.app/update/toque-media-lda/tauri-app-teste/{{target}}-{{arch}}/{{current_version}}"
       ],
+      "windows": {
+        "installMode": "passive"
+      },
       "dialog": true,
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDIzQjcyMTQyOTZDMEE4MjIKUldRaXFNQ1dRaUczSXlaM1FhTC9uYXZ4OWNKV3ZQTW5IVzhHS2RpNlNaK2laV3RhNXBEdTVWUnoK"
     }
