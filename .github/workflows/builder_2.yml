@@ -50,7 +50,10 @@ jobs:
         run: rustup target add ${{ matrix.target }}
 
       - name: Build Tauri App
-        run: npm run tauri build -- -vv --target ${{ matrix.target }}
+        run: yarn tauri build -- -vv --target ${{ matrix.target }}
+        env:
+          TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
       - name: Upload Build Artifacts (CrabNebula Cloud)
         uses: crabnebula-dev/cloud-release@v0.2.0
