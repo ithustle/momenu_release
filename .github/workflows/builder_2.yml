@@ -1,0 +1,73 @@
+name: "Publish Release"
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  draft:
+    name: Draft Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Draft Release (CrabNebula Cloud)
+        uses: crabnebula-dev/cloud-release@dev
+        id: draft
+        with:
+          command: release draft ${{ secrets.CN_APP_ID }} --framework tauri
+          api-key: ${{ secrets.CN_API_KEY }}
+
+  # Step 2: Build and upload assets for each OS to the new release
+  build-and-upload:
+    name: Build and Upload Assets
+    needs: draft
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      # This will create a job for each platform in the matrix
+      matrix:
+        include:
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Front-end Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Build Tauri App
+        run: npm run tauri build -- -vv --target ${{ matrix.target }}
+
+      - name: Upload Build Artifacts (CrabNebula Cloud)
+        uses: crabnebula-dev/cloud-release@dev
+        id: upload
+        with:
+          command: release upload ${{ secrets.CN_APP_ID }} --framework tauri
+          api-key: ${{ secrets.CN_API_KEY }}
+
+  # Step 3: Publish the release
+  publish:
+    name: Publish Release to CrabNebula Cloud
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: crabnebula-dev/cloud-release@dev
+        id: publish
+        with:
+          command: release publish ${{ secrets.CN_APP_ID }} --framework tauri
+          api-key: ${{ secrets.CN_API_KEY }}
